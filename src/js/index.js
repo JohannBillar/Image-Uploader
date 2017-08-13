@@ -1,5 +1,4 @@
-'use-strict';
+import login from './login';
+import main from './main';
 
 require('../sass/main.scss');
-
-console.log('PROGRAM RUNNING');

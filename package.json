@@ -9,6 +9,7 @@
     "start": "webpack-dev-server --progress --colors --inline --watch"
   },
   "dependencies": {
+    "firebase": "^4.2.0",
     "normalize.scss": "^0.1.0",
     "webpack-dev-server": "^2.7.1"
   },

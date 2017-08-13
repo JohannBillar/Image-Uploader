@@ -4,4 +4,8 @@
 @import '~normalize.scss/normalize.scss';
 
 // Components
+@import 'components/mixins';
+@import 'components/helpers';
+@import 'components/base';
 @import 'components/image-uploader';
+@import 'components/button';

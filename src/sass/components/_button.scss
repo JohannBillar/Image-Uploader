@@ -1,0 +1,34 @@
+button {
+  border: none;
+  outline: none;
+}
+
+.btn {
+  // font: normal normal normal 14px/1.4em 'Avenir Light', Avenir Light, Arial, sans-serif;
+  background-color: #0074d9;
+  color: #ffffff;
+  text-align: center;
+  cursor: pointer;
+  -webkit-transition: all 0.4s ease 0s;
+  -moz-transition: all 0.4s ease 0s;
+  -o-transition: all 0.4s ease 0s;
+  transition: all 0.4s ease 0s;
+}
+
+.btn:hover,
+.btn:focus {
+  background-color: #7fdbff;
+  color: #ffffff;
+}
+
+.btn-default {
+  height: 40px;
+  min-height: 19px;
+  width: 142px;
+}
+
+.btn-small {
+  height: 27px;
+  min-height: 19px;
+  width: 71px;
+}

@@ -5,7 +5,7 @@
   <title>Image Uploader</title>
 </head>
 <body>
-<main class="container">
+<nav class="container">
   <div>
     <button type="button" class="login-button btn btn-default pull-right">
       Login
@@ -16,31 +16,17 @@
       Logout
     </button>
   </div>
+</nav>
+<main class="container">
+  <section class="images-container">
+    Images go here
+  </section>
+  <section>
+    <form action="">
+      <input class="image-capture" type="file" accept="image/*" capture="camera">
+    </form>
+  </section>
 </main>
-
-
-
-
-
-
-
-  <!-- <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script> -->
-  <!--   <script>
-    var config = {
-      apiKey: 'AIzaSyBq-Dk27N-OxEio0iHV0W1ifiUp3_BJcus',
-      authDomain: 'image-uploader-88aa8.firebaseapp.com',
-      databaseURL: 'https://image-uploader-88aa8.firebaseio.com',
-      projectId: 'image-uploader-88aa8',
-      storageBucket: 'image-uploader-88aa8.appspot.com',
-      messagingSenderId: '895095955555'
-    };
-    firebase.initializeApp(config);
-
-    var database = firebase.database();
-    var auth = firebase.auth();
-    var storage = firebase.storage();
-    var googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-  </script> -->
   <script src="/public/bundle.js"></script>
 </body>
 </html>

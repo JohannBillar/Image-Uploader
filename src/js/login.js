@@ -2,6 +2,7 @@ import { auth, GithubAuthProvider } from './firebase';
 
 var loginBtn = document.querySelector('.login-button');
 var logoutBtn = document.querySelector('.logout-button');
+var currentUser = null;
 
 loginBtn.addEventListener('click', login);
 logoutBtn.addEventListener('click', logout);
@@ -15,6 +16,7 @@ function logout() {
 
 auth.onAuthStateChanged(function(user) {
   if (user) {
+    currentUser = user;
     loginBtn.parentNode.style.display = 'none';
     logoutBtn.parentNode.style.display = 'block';
     console.log('LOGGEDIN WITH: ', user.displayName);
@@ -24,3 +26,7 @@ auth.onAuthStateChanged(function(user) {
     console.log('LOGGEDOUT');
   }
 });
+
+export var user = currentUser;
+
+

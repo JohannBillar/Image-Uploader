@@ -1,6 +1,7 @@
 import { auth, database, storage } from './firebase';
+import login, { user } from './login';
 
-var userImagesRef = database.ref('/userImages');
+var usersImagesRef = database.ref('/userImages');
 
 var imageCapture = document.querySelector('.image-capture');
 var submitBtn = document.querySelector('.btn-upload-image');
@@ -28,7 +29,7 @@ function uploadImage() {
           .ref(path)
           .getDownloadURL()
           .then(function(url) {
-            userImagesRef
+            usersImagesRef
               .child(uid)
               .child('downloadURLs')
               .push(url);
@@ -47,3 +48,30 @@ function uploadImage() {
 
 imageCapture.addEventListener('change', addImages);
 submitBtn.addEventListener('click', uploadImage);
+
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    var uid = user.uid;
+    var userImagesRef = usersImagesRef.child(uid).child('downloadURLs');
+    userImagesRef.on('child_added', function(snapshot, prevChildKey) {
+      var newImageURL = snapshot.val();
+      createImageUI(newImageURL);
+    });
+    userImagesRef.on('child_changed', function(snapshot, prevChildKey) {
+      var changedImage = snapshot.val();
+    });
+    userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
+      var deletedImage = snapshot.val();
+    });
+  }
+});
+
+var imageContainer = document.querySelector('.images-container');
+
+function createImageUI(URL) {
+  imageContainer.innerHTML += '<li>' + '<img src="' + URL + '" alt="">' + '</li>';
+}
+
+function updateImageUI(URL) {}
+
+function deleteImageUI(URL) {}

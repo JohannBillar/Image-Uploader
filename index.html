@@ -5,7 +5,8 @@
   <title>Image Uploader</title>
 </head>
 <body>
-<nav class="container">
+
+<nav class="container group">
   <div>
     <button type="button" class="login-button btn btn-default pull-right">
       Login
@@ -17,6 +18,7 @@
     </button>
   </div>
 </nav>
+
 <main class="container">
   <section class="images-container">
     <img src="https://firebasestorage.googleapis.com/v0/b/image-uploader-88aa8.appspot.com/o/placeholders%2Focean.jpg?alt=media&token=b7a7aedd-70a2-4366-8a1f-ea2b66654eef" alt="ocean">
@@ -24,9 +26,11 @@
   <section>
     <form action="">
       <input class="image-capture" type="file" accept="image/*" capture="camera">
+      <button class="btn btn-upload-image" type="button">Submit</button>
     </form>
   </section>
 </main>
-  <script src="/public/bundle.js"></script>
+
+<script src="/public/bundle.js"></script>
 </body>
 </html>

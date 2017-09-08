@@ -1,3 +1,9 @@
 .pull-right {
   float: right !important;
 }
+
+.group:after {
+  content: '';
+  display: table;
+  clear: both;
+}

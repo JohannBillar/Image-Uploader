@@ -19,10 +19,15 @@ a {
 }
 
 .container {
-  max-width: 960px; 
+  max-width: 960px;
   margin-left: auto;
-  margin-right: auto; 
-  padding-left: 20px; 
-  padding-right: 20px; 
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
   width: 100%;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }

@@ -6,6 +6,8 @@ node_modules/
 .nyc_output
 .eslintcache
 
+src/assets
+
 # production
 /build
 *.map

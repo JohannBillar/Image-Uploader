@@ -5,19 +5,20 @@
   <title>Image Uploader</title>
 </head>
 <body>
-
-<nav class="container group">
-  <div>
-    <button type="button" class="login-button btn btn-default pull-right">
-      Login
-    </button>
-  </div>
-    <div>
-    <button type="button" class="logout-button btn btn-default pull-right">
-      Logout
-    </button>
-  </div>
-</nav>
+<header class="container group">
+  <nav class="main-nav">
+    <div class="login-btn">
+      <button type="button" class="login-button btn btn-default pull-right">
+        Login
+      </button>
+    </div>
+    <div class="logout-btn">
+      <button type="button" class="logout-button btn btn-default pull-right">
+        Logout
+      </button>
+    </div>
+  </nav>
+</header>
 
 <main class="container">
   <section>
@@ -26,12 +27,17 @@
     <!-- <img src="https://firebasestorage.googleapis.com/v0/b/image-uploader-88aa8.appspot.com/o/placeholders%2Focean.jpg?alt=media&token=b7a7aedd-70a2-4366-8a1f-ea2b66654eef" alt="ocean"> -->
   </section>
   <section>
-    <form action="">
+    <form>
+      <fieldset>
+        <legend>Click to upload your image</legend>
       <input class="image-capture" type="file" accept="image/*,capture=camera">
-      <button class="btn btn-upload-image" type="button">Submit</button>
+      <button class="btn btn-upload-image pull-right" type="button">Submit</button>
     </form>
+    </fieldset>
   </section>
 </main>
+
+<footer></footer>
 
 <script src="/public/bundle.js"></script>
 </body>

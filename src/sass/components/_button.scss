@@ -4,7 +4,6 @@ button {
 }
 
 .btn {
-  // font: normal normal normal 14px/1.4em 'Avenir Light', Avenir Light, Arial, sans-serif;
   background-color: #0074d9;
   color: #ffffff;
   text-align: center;
@@ -13,12 +12,11 @@ button {
   -moz-transition: all 0.4s ease 0s;
   -o-transition: all 0.4s ease 0s;
   transition: all 0.4s ease 0s;
-}
-
-.btn:hover,
-.btn:focus {
-  background-color: #7fdbff;
-  color: #ffffff;
+  &:hover,
+  &:focus {
+    background-color: #7fdbff;
+    color: #ffffff;
+  }
 }
 
 .btn-default {
@@ -33,6 +31,7 @@ button {
   width: 71px;
 }
 
-.hidden {
+.login-btn,
+.logout-btn {
   display: none;
 }

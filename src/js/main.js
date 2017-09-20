@@ -2,11 +2,11 @@ import { auth, database, storage } from './firebase';
 import login, { user } from './login';
 
 var usersImagesRef = database.ref('/userImages');
-
 var imageCapture = document.querySelector('.image-capture');
 var submitBtn = document.querySelector('.btn-upload-image');
-
+var imageContainer = document.querySelector('.images-container');
 var files = [];
+
 function addImages() {
   if (!this.files[0].type.match('image/.*')) {
     alert('You can only add images at the moment.');
@@ -63,10 +63,10 @@ auth.onAuthStateChanged(function(user) {
     userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
       var deletedImage = snapshot.val();
     });
+  } else {
+    imageContainer.innerHTML = '';
   }
 });
-
-var imageContainer = document.querySelector('.images-container');
 
 function createImageUI(URL) {
   imageContainer.innerHTML += '<li>' + '<img src="' + URL + '" alt="">' + '</li>';

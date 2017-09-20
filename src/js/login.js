@@ -19,7 +19,6 @@ function logout() {
 auth.onAuthStateChanged(function(user) {
   if (user) {
     currentUser = user;
-
     var userRef = usersRef.child(currentUser.uid);
     var userObject = {
       name: currentUser.displayName,
@@ -27,16 +26,13 @@ auth.onAuthStateChanged(function(user) {
       photoURL: currentUser.photoURL,
       uid: currentUser.uid
     };
-
     userRef.update(userObject);
-
     loginBtn.parentNode.style.display = 'none';
     logoutBtn.parentNode.style.display = 'block';
-
     console.log('LOGGEDIN WITH: ', currentUser.displayName);
   } else {
-    logoutBtn.parentNode.style.display = 'none';
     loginBtn.parentNode.style.display = 'block';
+    logoutBtn.parentNode.style.display = 'none';
     console.log('LOGGEDOUT');
   }
 }),

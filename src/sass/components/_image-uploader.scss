@@ -5,3 +5,13 @@ body {
 .images-container {
   @include clearfix;
 }
+
+ul.images-container {
+  margin: 0;
+  padding: 0;
+}
+
+ul.images-container li {
+  margin-top: 10px;
+}
+

@@ -35,7 +35,7 @@ function uploadImage() {
             usersImagesRef
               .child(uid)
               .child('downloadURLs')
-              .push(url);
+              .push({ url: url, name: file.name });
           })
           .catch(function(error) {
             console.log('URL UPLOAD IMAGE ERROR -> ', error);
@@ -60,8 +60,10 @@ auth.onAuthStateChanged(function(user) {
     var userImagesRef = usersImagesRef.child(uid).child('downloadURLs');
 
     userImagesRef.on('child_added', function(snapshot, prevChildKey) {
-      var newImageURL = snapshot.val();
-      createImageUI(newImageURL);
+      var newImageURL = snapshot.val().url;
+      var pushKey = snapshot.key;
+      var altText = snapshot.val().name;
+      createImageUI(newImageURL, pushKey, altText);
     });
 
     userImagesRef.on('child_changed', function(snapshot, prevChildKey) {
@@ -70,6 +72,7 @@ auth.onAuthStateChanged(function(user) {
 
     userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
       var deletedImage = snapshot.val();
+      console.log('CHILD REMOVED -> ', deletedImage);
     });
   } else {
     mainContainer.style.display = 'none';
@@ -77,8 +80,55 @@ auth.onAuthStateChanged(function(user) {
   }
 });
 
-function createImageUI(URL) {
-  imageContainer.innerHTML += '<li>' + '<img src="' + URL + '" alt="">' + '</li>';
+function createImageUI(URL, pushKey, altText) {
+  imageContainer.innerHTML +=
+    '<li>' +
+    '<span class="fa fa-pencil" aria-label="Edit image"></span>' +
+    '<span class="fa fa-trash" aria-label="Delete image"></span>' +
+    '<img src="' +
+    URL +
+    '" data-pushkey="' +
+    pushKey +
+    '"  alt="' +
+    altText +
+    '">' +
+    '</li>';
+  if (imageContainer.innerHTML !== '') {
+    addEditImageClickListeners();
+    addDeleteImageClickListeners();
+  }
+}
+
+function addEditImageClickListeners() {
+  var editPencilsNodeList = document.querySelectorAll('.fa-pencil');
+  var editPencilsArray = Array.prototype.slice.call(editPencilsNodeList);
+  editPencilsArray.forEach(function(editPencil) {
+    editPencil.addEventListener('click', editImage);
+  });
+}
+
+function addDeleteImageClickListeners() {
+  var deleteIconsNodeList = document.querySelectorAll('.fa-trash');
+  var deleteIconsArray = Array.prototype.slice.call(deleteIconsNodeList);
+  deleteIconsArray.forEach(function(deleteIcon) {
+    deleteIcon.addEventListener('click', deleteImage);
+  });
+}
+
+function editImage() {
+  console.log('EDIT IMAGE -> ', this.nextSibling.nextSibling.dataset.pushkey);
+}
+
+function deleteImage() {
+  console.log('DELETE IMAGE -> ', this.nextSibling.dataset.pushkey);
+  var pushKey = this.nextSibling.dataset.pushkey;
+  var imageRef = usersImagesRef
+    .child(auth.currentUser.uid)
+    .child('downloadURLs')
+    .child(pushKey);
+  if (window.confirm('Are you sure you want to delete your image?')) {
+    imageRef.remove();
+  }
 }
 
 function updateImageUI(URL) {}

@@ -3,6 +3,11 @@ button {
   outline: none;
 }
 
+.login-btn,
+.logout-btn {
+  display: none;
+}
+
 .btn {
   background-color: #0074d9;
   color: #ffffff;
@@ -29,9 +34,4 @@ button {
   height: 27px;
   min-height: 19px;
   width: 71px;
-}
-
-.login-btn,
-.logout-btn {
-  display: none;
 }

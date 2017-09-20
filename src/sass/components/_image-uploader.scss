@@ -6,12 +6,14 @@ body {
   @include clearfix;
 }
 
+main.container {
+  display: none;
+}
+
 ul.images-container {
   margin: 0;
   padding: 0;
+  li {
+    margin-top: 10px;
+  }
 }
-
-ul.images-container li {
-  margin-top: 10px;
-}
-

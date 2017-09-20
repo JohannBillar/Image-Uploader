@@ -2,11 +2,14 @@ import { auth, database, storage } from './firebase';
 import login, { user } from './login';
 
 var usersImagesRef = database.ref('/userImages');
+
 var imageCapture = document.querySelector('.image-capture');
 var submitBtn = document.querySelector('.btn-upload-image');
-var imageContainer = document.querySelector('.images-container');
-var files = [];
 
+imageCapture.addEventListener('change', addImages);
+submitBtn.addEventListener('click', uploadImage);
+
+var files = [];
 function addImages() {
   if (!this.files[0].type.match('image/.*')) {
     alert('You can only add images at the moment.');
@@ -46,24 +49,30 @@ function uploadImage() {
   imageCapture.value = '';
 }
 
-imageCapture.addEventListener('change', addImages);
-submitBtn.addEventListener('click', uploadImage);
+var mainContainer = document.querySelector('main.container');
+var imageContainer = document.querySelector('.images-container');
 
 auth.onAuthStateChanged(function(user) {
   if (user) {
+    mainContainer.style.display = 'block';
+
     var uid = user.uid;
     var userImagesRef = usersImagesRef.child(uid).child('downloadURLs');
+
     userImagesRef.on('child_added', function(snapshot, prevChildKey) {
       var newImageURL = snapshot.val();
       createImageUI(newImageURL);
     });
+
     userImagesRef.on('child_changed', function(snapshot, prevChildKey) {
       var changedImage = snapshot.val();
     });
+
     userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
       var deletedImage = snapshot.val();
     });
   } else {
+    mainContainer.style.display = 'none';
     imageContainer.innerHTML = '';
   }
 });
@@ -73,5 +82,4 @@ function createImageUI(URL) {
 }
 
 function updateImageUI(URL) {}
-
 function deleteImageUI(URL) {}

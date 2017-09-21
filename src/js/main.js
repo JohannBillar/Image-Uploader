@@ -71,8 +71,9 @@ auth.onAuthStateChanged(function(user) {
     });
 
     userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
-      var deletedImage = snapshot.val();
-      console.log('CHILD REMOVED -> ', deletedImage);
+      var pushKey = snapshot.key;
+      var liArray = Array.prototype.slice.call(imageContainer.querySelectorAll('li'));
+      deleteImageUI(liArray, pushKey);
     });
   } else {
     mainContainer.style.display = 'none';
@@ -82,20 +83,45 @@ auth.onAuthStateChanged(function(user) {
 
 function createImageUI(URL, pushKey, altText) {
   imageContainer.innerHTML +=
-    '<li>' +
+    '<li id="' +
+    pushKey +
+    '">' +
     '<span class="fa fa-pencil" aria-label="Edit image"></span>' +
     '<span class="fa fa-trash" aria-label="Delete image"></span>' +
     '<img src="' +
     URL +
-    '" data-pushkey="' +
-    pushKey +
-    '"  alt="' +
+    '" alt="' +
     altText +
     '">' +
     '</li>';
   if (imageContainer.innerHTML !== '') {
     addEditImageClickListeners();
     addDeleteImageClickListeners();
+  }
+}
+
+function updateImageUI(URL) {}
+
+function deleteImageUI(liArray, pushKey) {
+  liArray.forEach(function(li) {
+    if (li.id === pushKey) {
+      li.remove();
+    }
+  });
+}
+
+function editImage() {
+  console.log('EDIT IMAGE -> ', this.parentNode.id);
+}
+
+function deleteImage() {
+  var pushKey = this.parentNode.id;
+  var imageRef = usersImagesRef
+    .child(auth.currentUser.uid)
+    .child('downloadURLs')
+    .child(pushKey);
+  if (window.confirm('Are you sure you want to delete your image?')) {
+    imageRef.remove();
   }
 }
 
@@ -114,22 +140,3 @@ function addDeleteImageClickListeners() {
     deleteIcon.addEventListener('click', deleteImage);
   });
 }
-
-function editImage() {
-  console.log('EDIT IMAGE -> ', this.nextSibling.nextSibling.dataset.pushkey);
-}
-
-function deleteImage() {
-  console.log('DELETE IMAGE -> ', this.nextSibling.dataset.pushkey);
-  var pushKey = this.nextSibling.dataset.pushkey;
-  var imageRef = usersImagesRef
-    .child(auth.currentUser.uid)
-    .child('downloadURLs')
-    .child(pushKey);
-  if (window.confirm('Are you sure you want to delete your image?')) {
-    imageRef.remove();
-  }
-}
-
-function updateImageUI(URL) {}
-function deleteImageUI(URL) {}

@@ -21,7 +21,7 @@ function addImages() {
 function uploadImage() {
   var uid = auth.currentUser.uid;
   files.forEach(function(file) {
-    var filePath = 'userImages/' + uid + '/' + 'images/' + file.name;
+    var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
     storage
       .ref(filePath)
       .put(file)
@@ -128,17 +128,6 @@ function deleteImageUI(liArray, pushKey) {
   });
 }
 
-function deleteImage() {
-  var pushKey = this.parentNode.id;
-  var imageRef = usersImagesRef
-    .child(auth.currentUser.uid)
-    .child('downloadURLs')
-    .child(pushKey);
-  if (window.confirm('Are you sure you want to delete your image?')) {
-    imageRef.remove();
-  }
-}
-
 function editImage() {
   var files = [];
   var pushKey = this.parentNode.parentNode.id;
@@ -149,7 +138,7 @@ function editImage() {
   files.push(this.files[0]);
   var uid = auth.currentUser.uid;
   files.forEach(function(file) {
-    var filePath = 'userImages/' + uid + '/' + 'images/' + file.name;
+    var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
     storage
       .ref(filePath)
       .put(file)
@@ -175,6 +164,17 @@ function editImage() {
   });
   files = [];
   this.value = '';
+}
+
+function deleteImage() {
+  var pushKey = this.parentNode.id;
+  var imageRef = usersImagesRef
+    .child(auth.currentUser.uid)
+    .child('downloadURLs')
+    .child(pushKey);
+  if (window.confirm('Are you sure you want to delete your image?')) {
+    imageRef.remove();
+  }
 }
 
 function addEditImagesListener() {

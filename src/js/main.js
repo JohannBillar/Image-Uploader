@@ -20,7 +20,6 @@ function addImages() {
 
 function uploadImage() {
   var uid = auth.currentUser.uid;
-
   files.forEach(function(file) {
     var filePath = 'userImages/' + uid + '/' + 'images/' + file.name;
     storage
@@ -67,7 +66,11 @@ auth.onAuthStateChanged(function(user) {
     });
 
     userImagesRef.on('child_changed', function(snapshot, prevChildKey) {
-      var changedImage = snapshot.val();
+      var pushKey = snapshot.key;
+      var liArray = Array.prototype.slice.call(imageContainer.querySelectorAll('li'));
+      var changedImageURL = snapshot.val().url;
+      var altText = snapshot.val().name;
+      updateImageUI(liArray, pushKey, changedImageURL, altText);
     });
 
     userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
@@ -86,7 +89,14 @@ function createImageUI(URL, pushKey, altText) {
     '<li id="' +
     pushKey +
     '">' +
+    '<label for="edit-image' +
+    pushKey +
+    '">' +
     '<span class="fa fa-pencil" aria-label="Edit image"></span>' +
+    '<input class="edit-image-capture hide-component" id="edit-image' +
+    pushKey +
+    '" type="file" accept="image/*,capture=camera">' +
+    '</label>' +
     '<span class="fa fa-trash" aria-label="Delete image"></span>' +
     '<img src="' +
     URL +
@@ -95,12 +105,20 @@ function createImageUI(URL, pushKey, altText) {
     '">' +
     '</li>';
   if (imageContainer.innerHTML !== '') {
-    addEditImageClickListeners();
-    addDeleteImageClickListeners();
+    addEditImagesListener();
+    addDeleteImagesClickListeners();
   }
 }
 
-function updateImageUI(URL) {}
+function updateImageUI(liArray, pushKey, changedImageURL, altText) {
+  liArray.forEach(function(li) {
+    if (li.id === pushKey) {
+      var imgEl = li.childNodes[2];
+      imgEl.src = changedImageURL;
+      imgEl.alt = altText;
+    }
+  });
+}
 
 function deleteImageUI(liArray, pushKey) {
   liArray.forEach(function(li) {
@@ -108,10 +126,6 @@ function deleteImageUI(liArray, pushKey) {
       li.remove();
     }
   });
-}
-
-function editImage() {
-  console.log('EDIT IMAGE -> ', this.parentNode.id);
 }
 
 function deleteImage() {
@@ -125,17 +139,53 @@ function deleteImage() {
   }
 }
 
-function addEditImageClickListeners() {
-  var editPencilsNodeList = document.querySelectorAll('.fa-pencil');
-  var editPencilsArray = Array.prototype.slice.call(editPencilsNodeList);
-  editPencilsArray.forEach(function(editPencil) {
-    editPencil.addEventListener('click', editImage);
+function editImage() {
+  var files = [];
+  var pushKey = this.parentNode.parentNode.id;
+  if (!this.files[0].type.match('image/.*')) {
+    alert('You can only add images at the moment.');
+    return;
+  }
+  files.push(this.files[0]);
+  var uid = auth.currentUser.uid;
+  files.forEach(function(file) {
+    var filePath = 'userImages/' + uid + '/' + 'images/' + file.name;
+    storage
+      .ref(filePath)
+      .put(file)
+      .then(function(snapshot) {
+        var path = snapshot.metadata.fullPath;
+        storage
+          .ref(path)
+          .getDownloadURL()
+          .then(function(url) {
+            usersImagesRef
+              .child(uid)
+              .child('downloadURLs')
+              .child(pushKey)
+              .set({ url: url, name: file.name });
+          })
+          .catch(function(error) {
+            console.log('URL UPLOAD IMAGE ERROR -> ', error);
+          });
+      })
+      .catch(function(error) {
+        console.log('UPLOAD IMAGE ERROR -> ', error);
+      });
+  });
+  files = [];
+  this.value = '';
+}
+
+function addEditImagesListener() {
+  var editImageCaptureArray = Array.prototype.slice.call(document.querySelectorAll('.edit-image-capture'));
+  editImageCaptureArray.forEach(function(imageCapture) {
+    imageCapture.addEventListener('change', editImage);
   });
 }
 
-function addDeleteImageClickListeners() {
-  var deleteIconsNodeList = document.querySelectorAll('.fa-trash');
-  var deleteIconsArray = Array.prototype.slice.call(deleteIconsNodeList);
+function addDeleteImagesClickListeners() {
+  var deleteIconsArray = Array.prototype.slice.call(document.querySelectorAll('.fa-trash'));
   deleteIconsArray.forEach(function(deleteIcon) {
     deleteIcon.addEventListener('click', deleteImage);
   });

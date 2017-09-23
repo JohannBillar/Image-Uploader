@@ -7,7 +7,7 @@ var imageCapture = document.querySelector('.image-capture');
 var submitBtn = document.querySelector('.btn-upload-image');
 
 imageCapture.addEventListener('change', addImages);
-submitBtn.addEventListener('click', uploadImage);
+submitBtn.addEventListener('click', uploadImageTask);
 
 var files = [];
 function addImages() {
@@ -16,6 +16,33 @@ function addImages() {
     return;
   }
   return files.push(this.files[0]);
+}
+
+function uploadImageTask() {
+  var file = files[0];
+  var uid = auth.currentUser.uid;
+  var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
+  var uploadTask = storage.ref(filePath).put(file);
+
+  uploadTask.on(
+    'state_changed',
+    function progress(snapshot) {
+      var progress = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+      console.log('Upload is ' + progress + '% done');
+    },
+    function(error) {
+      console.log('ERROR UPLOAD IMAGE TASK', error);
+    },
+    function() {
+      var downloadURL = uploadTask.snapshot.downloadURL;
+      usersImagesRef
+        .child(uid)
+        .child('downloadURLs')
+        .push({ url: downloadURL, name: file.name });
+    }
+  );
+  files = [];
+  imageCapture.value = '';
 }
 
 function uploadImage() {
@@ -47,6 +74,10 @@ function uploadImage() {
   files = [];
   imageCapture.value = '';
 }
+
+// uploadTask.on('state_changed', function progress(snapshot) {
+//   console.log('BYTES GOING', snapshot.totalBytesTransferred); // progress of upload
+// });
 
 var mainContainer = document.querySelector('main.container');
 var imageContainer = document.querySelector('.images-container');

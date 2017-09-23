@@ -45,40 +45,6 @@ function uploadImageTask() {
   imageCapture.value = '';
 }
 
-function uploadImage() {
-  var uid = auth.currentUser.uid;
-  files.forEach(function(file) {
-    var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
-    storage
-      .ref(filePath)
-      .put(file)
-      .then(function(snapshot) {
-        var path = snapshot.metadata.fullPath;
-        storage
-          .ref(path)
-          .getDownloadURL()
-          .then(function(url) {
-            usersImagesRef
-              .child(uid)
-              .child('downloadURLs')
-              .push({ url: url, name: file.name });
-          })
-          .catch(function(error) {
-            console.log('URL UPLOAD IMAGE ERROR -> ', error);
-          });
-      })
-      .catch(function(error) {
-        console.log('UPLOAD IMAGE ERROR -> ', error);
-      });
-  });
-  files = [];
-  imageCapture.value = '';
-}
-
-// uploadTask.on('state_changed', function progress(snapshot) {
-//   console.log('BYTES GOING', snapshot.totalBytesTransferred); // progress of upload
-// });
-
 var mainContainer = document.querySelector('main.container');
 var imageContainer = document.querySelector('.images-container');
 

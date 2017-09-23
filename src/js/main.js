@@ -128,37 +128,36 @@ function deleteImageUI(liArray, pushKey) {
 function editImage() {
   var files = [];
   var pushKey = this.parentNode.parentNode.id;
+
   if (!this.files[0].type.match('image/.*')) {
     alert('You can only add images at the moment.');
     return;
   }
   files.push(this.files[0]);
+
+  var file = files[0];
   var uid = auth.currentUser.uid;
-  files.forEach(function(file) {
-    var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
-    storage
-      .ref(filePath)
-      .put(file)
-      .then(function(snapshot) {
-        var path = snapshot.metadata.fullPath;
-        storage
-          .ref(path)
-          .getDownloadURL()
-          .then(function(url) {
-            usersImagesRef
-              .child(uid)
-              .child('downloadURLs')
-              .child(pushKey)
-              .set({ url: url, name: file.name });
-          })
-          .catch(function(error) {
-            console.log('URL UPLOAD IMAGE ERROR -> ', error);
-          });
-      })
-      .catch(function(error) {
-        console.log('UPLOAD IMAGE ERROR -> ', error);
-      });
-  });
+  var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
+  var uploadTask = storage.ref(filePath).put(file);
+
+  uploadTask.on(
+    'state_changed',
+    function progress(snapshot) {
+      var progress = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+      console.log('Upload is ' + progress + '% done');
+    },
+    function(error) {
+      console.log('ERROR UPLOAD IMAGE TASK', error);
+    },
+    function() {
+      var downloadURL = uploadTask.snapshot.downloadURL;
+      usersImagesRef
+        .child(uid)
+        .child('downloadURLs')
+        .child(pushKey)
+        .set({ url: downloadURL, name: file.name });
+    }
+  );
   files = [];
   this.value = '';
 }

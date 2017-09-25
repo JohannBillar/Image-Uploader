@@ -21,7 +21,8 @@ function addImages() {
 function uploadImageTask() {
   var file = files[0];
   var uid = auth.currentUser.uid;
-  var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
+  var fileName = file.name + '-' + Math.floor(Math.random() * 100);
+  var filePath = 'userImages/' + uid + '/' + 'images/' + fileName;
   var uploadTask = storage.ref(filePath).put(file, { contentType: file.type });
 
   uploadTask.on(
@@ -41,7 +42,7 @@ function uploadImageTask() {
     usersImagesRef
       .child(uid)
       .child('downloadURLs')
-      .push({ url: downloadURL, name: file.name });
+      .push({ url: downloadURL, name: fileName });
   });
 
   files = [];
@@ -139,8 +140,9 @@ function editImage() {
 
   var file = files[0];
   var uid = auth.currentUser.uid;
-  var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
-  var uploadTask = storage.ref(filePath).put(file);
+  var fileName = file.name + '-' + Math.floor(Math.random() * 100);
+  var filePath = 'userImages/' + uid + '/' + 'images/' + fileName;
+  var uploadTask = storage.ref(filePath).put(file, { contentType: file.type });
 
   uploadTask.on(
     'state_changed',
@@ -162,7 +164,7 @@ function editImage() {
       .child(uid)
       .child('downloadURLs')
       .child(pushKey)
-      .set({ url: downloadURL, name: file.name });
+      .set({ url: downloadURL, name: fileName });
   });
 
   files = [];
@@ -170,13 +172,29 @@ function editImage() {
 }
 
 function deleteImage() {
+  var uid = auth.currentUser.uid;
   var pushKey = this.parentNode.id;
+  var fileName = this.nextSibling.alt;
+  var filePath = 'userImages/' + uid + '/' + 'images/';
+  var storageRef = storage.ref(filePath);
   var imageRef = usersImagesRef
-    .child(auth.currentUser.uid)
+    .child(uid)
     .child('downloadURLs')
     .child(pushKey);
+
   if (window.confirm('Are you sure you want to delete your image?')) {
-    imageRef.remove();
+    storageRef
+      .child(fileName)
+      .delete()
+      .then(function() {
+        imageRef.update({
+          url: null,
+          name: null
+        });
+      })
+      .catch(function(error) {
+        console.log('DELETE IMAGE ERROR: ', error);
+      });
   }
 }
 

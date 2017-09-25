@@ -31,7 +31,11 @@ function uploadImageTask() {
       console.log('Upload is ' + progress + '% done');
     },
     function(error) {
-      console.log('ERROR UPLOAD IMAGE TASK', error);
+      if (error.code === 'storage/unauthorized') {
+        window.alert('Your image could not be uploaded');
+      } else {
+        console.log('ERROR UPLOAD IMAGE TASK', error);
+      }
     },
     function() {
       var downloadURL = uploadTask.snapshot.downloadURL;
@@ -147,7 +151,11 @@ function editImage() {
       console.log('Upload is ' + progress + '% done');
     },
     function(error) {
-      console.log('ERROR UPLOAD IMAGE TASK', error);
+      if (error.code === 'storage/unauthorized') {
+        window.alert('Your image could not be uploaded');
+      } else {
+        console.log('ERROR UPLOAD IMAGE TASK', error);
+      }
     },
     function() {
       var downloadURL = uploadTask.snapshot.downloadURL;

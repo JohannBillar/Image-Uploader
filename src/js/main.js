@@ -9,6 +9,42 @@ var submitBtn = document.querySelector('.btn-upload-image');
 imageCapture.addEventListener('change', addImages);
 submitBtn.addEventListener('click', uploadImageTask);
 
+var mainContainer = document.querySelector('main.container');
+var imageContainer = document.querySelector('.images-container');
+
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    mainContainer.style.display = 'block';
+
+    var uid = user.uid;
+    var userImagesRef = usersImagesRef.child(uid).child('downloadURLs');
+
+    userImagesRef.on('child_added', function(snapshot, prevChildKey) {
+      var newImageURL = snapshot.val().url;
+      var pushKey = snapshot.key;
+      var altText = snapshot.val().name;
+      createImageUI(newImageURL, pushKey, altText);
+    });
+
+    userImagesRef.on('child_changed', function(snapshot, prevChildKey) {
+      var pushKey = snapshot.key;
+      var liArray = Array.prototype.slice.call(imageContainer.querySelectorAll('li'));
+      var changedImageURL = snapshot.val().url;
+      var altText = snapshot.val().name;
+      updateImageUI(liArray, pushKey, changedImageURL, altText);
+    });
+
+    userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
+      var pushKey = snapshot.key;
+      var liArray = Array.prototype.slice.call(imageContainer.querySelectorAll('li'));
+      deleteImageUI(liArray, pushKey);
+    });
+  } else {
+    mainContainer.style.display = 'none';
+    imageContainer.innerHTML = '';
+  }
+});
+
 var files = [];
 function addImages() {
   if (!this.files[0].type.match('image/.*')) {
@@ -48,42 +84,6 @@ function uploadImageTask() {
   files = [];
   imageCapture.value = '';
 }
-
-var mainContainer = document.querySelector('main.container');
-var imageContainer = document.querySelector('.images-container');
-
-auth.onAuthStateChanged(function(user) {
-  if (user) {
-    mainContainer.style.display = 'block';
-
-    var uid = user.uid;
-    var userImagesRef = usersImagesRef.child(uid).child('downloadURLs');
-
-    userImagesRef.on('child_added', function(snapshot, prevChildKey) {
-      var newImageURL = snapshot.val().url;
-      var pushKey = snapshot.key;
-      var altText = snapshot.val().name;
-      createImageUI(newImageURL, pushKey, altText);
-    });
-
-    userImagesRef.on('child_changed', function(snapshot, prevChildKey) {
-      var pushKey = snapshot.key;
-      var liArray = Array.prototype.slice.call(imageContainer.querySelectorAll('li'));
-      var changedImageURL = snapshot.val().url;
-      var altText = snapshot.val().name;
-      updateImageUI(liArray, pushKey, changedImageURL, altText);
-    });
-
-    userImagesRef.on('child_removed', function(snapshot, prevChildKey) {
-      var pushKey = snapshot.key;
-      var liArray = Array.prototype.slice.call(imageContainer.querySelectorAll('li'));
-      deleteImageUI(liArray, pushKey);
-    });
-  } else {
-    mainContainer.style.display = 'none';
-    imageContainer.innerHTML = '';
-  }
-});
 
 function createImageUI(URL, pushKey, altText) {
   imageContainer.innerHTML +=

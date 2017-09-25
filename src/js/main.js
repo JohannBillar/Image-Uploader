@@ -22,7 +22,7 @@ function uploadImageTask() {
   var file = files[0];
   var uid = auth.currentUser.uid;
   var filePath = 'userImages/' + uid + '/' + 'images/' + file.name + '-' + Math.floor(Math.random() * 100);
-  var uploadTask = storage.ref(filePath).put(file);
+  var uploadTask = storage.ref(filePath).put(file, { contentType: file.type });
 
   uploadTask.on(
     'state_changed',
@@ -31,20 +31,19 @@ function uploadImageTask() {
       console.log('Upload is ' + progress + '% done');
     },
     function(error) {
-      if (error.code === 'storage/unauthorized') {
-        window.alert('Your image could not be uploaded');
-      } else {
-        console.log('ERROR UPLOAD IMAGE TASK', error);
-      }
-    },
-    function() {
-      var downloadURL = uploadTask.snapshot.downloadURL;
-      usersImagesRef
-        .child(uid)
-        .child('downloadURLs')
-        .push({ url: downloadURL, name: file.name });
+      error.code === 'storage/unauthorized'
+        ? window.alert('Your image could not be uploaded :( \n The size cannot exceed 1Mb')
+        : console.log('ERROR UPLOAD IMAGE TASK', error);
     }
   );
+  uploadTask.then(function(snapshot) {
+    var downloadURL = snapshot.downloadURL;
+    usersImagesRef
+      .child(uid)
+      .child('downloadURLs')
+      .push({ url: downloadURL, name: file.name });
+  });
+
   files = [];
   imageCapture.value = '';
 }
@@ -131,7 +130,6 @@ function deleteImageUI(liArray, pushKey) {
 
 function editImage() {
   var files = [];
-  var pushKey = this.parentNode.parentNode.id;
 
   if (!this.files[0].type.match('image/.*')) {
     alert('You can only add images at the moment.');
@@ -151,21 +149,22 @@ function editImage() {
       console.log('Upload is ' + progress + '% done');
     },
     function(error) {
-      if (error.code === 'storage/unauthorized') {
-        window.alert('Your image could not be uploaded');
-      } else {
-        console.log('ERROR UPLOAD IMAGE TASK', error);
-      }
-    },
-    function() {
-      var downloadURL = uploadTask.snapshot.downloadURL;
-      usersImagesRef
-        .child(uid)
-        .child('downloadURLs')
-        .child(pushKey)
-        .set({ url: downloadURL, name: file.name });
+      error.code === 'storage/unauthorized'
+        ? window.alert('Your image could not be uploaded :( \n The size cannot exceed 1Mb')
+        : console.log('ERROR EDIT IMAGE TASK', error);
     }
   );
+
+  var pushKey = this.parentNode.parentNode.id;
+  uploadTask.then(function(snapshot) {
+    var downloadURL = snapshot.downloadURL;
+    usersImagesRef
+      .child(uid)
+      .child('downloadURLs')
+      .child(pushKey)
+      .set({ url: downloadURL, name: file.name });
+  });
+
   files = [];
   this.value = '';
 }

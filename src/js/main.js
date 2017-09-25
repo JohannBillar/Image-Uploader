@@ -131,7 +131,6 @@ function deleteImageUI(liArray, pushKey) {
 
 function editImage() {
   var files = [];
-
   if (!this.files[0].type.match('image/.*')) {
     alert('You can only add images at the moment.');
     return;
@@ -143,6 +142,13 @@ function editImage() {
   var fileName = file.name + '-' + Math.floor(Math.random() * 100);
   var filePath = 'userImages/' + uid + '/' + 'images/' + fileName;
   var uploadTask = storage.ref(filePath).put(file, { contentType: file.type });
+  var pushKey = this.parentNode.parentNode.id;
+  var currentFileName = this.parentNode.parentNode.lastChild.alt;
+
+  var imageRef = usersImagesRef
+    .child(uid)
+    .child('downloadURLs')
+    .child(pushKey);
 
   uploadTask.on(
     'state_changed',
@@ -157,15 +163,16 @@ function editImage() {
     }
   );
 
-  var pushKey = this.parentNode.parentNode.id;
-  uploadTask.then(function(snapshot) {
-    var downloadURL = snapshot.downloadURL;
-    usersImagesRef
-      .child(uid)
-      .child('downloadURLs')
-      .child(pushKey)
-      .set({ url: downloadURL, name: fileName });
-  });
+  uploadTask
+    .then(function(snapshot) {
+      var downloadURL = snapshot.downloadURL;
+      imageRef.set({ url: downloadURL, name: fileName });
+    })
+    .then(function() {
+      var filePath = 'userImages/' + uid + '/' + 'images/';
+      var storageRef = storage.ref(filePath);
+      storageRef.child(currentFileName).delete();
+    });
 
   files = [];
   this.value = '';
